@@ -1,0 +1,113 @@
+user_cells = "         "
+last_play = "O"
+game_situation = ""
+
+def print_game(cells):  # Function for printing the grid
+    print("---------")
+    print("|", cells[0], cells[1], cells[2], "|")
+    print("|", cells[3], cells[4], cells[5], "|")
+    print("|", cells[6], cells[7], cells[8], "|")
+    print("---------")
+
+print_game(user_cells)
+
+
+
+def make_move(user_move = input()):  # Function to make a move
+    global user_cells
+    global last_play
+    global game_situation
+
+    # Prepare everything for the grid update
+    user_cells = [cell for cell in user_cells]
+    moves = {
+    '1 1': 0, '1 2': 1, '1 3': 2, '2 1': 3, '2 2': 4, '2 3': 5, '3 1': 6, '3 2': 7, '3 3': 8
+    }
+    error = []
+    errors = []
+    
+
+    for move, position in moves.items():
+        user_numbers = user_move.split()
+        if user_move == move and user_cells[position] == " ":
+            if last_play == "O":
+                user_cells[position] = "X"
+                last_play = "X"
+            elif last_play == "X":
+                user_cells[position] = "O"
+                last_play = "O"
+            else:
+                break
+        elif user_move == move and [user_cells[position] == "O" or user_cells[position] == "X"]:
+            print("This cell is occupied! Choose another one!")
+            errors.append("This cell is occupied! Choose another one!")
+        else:
+            try:
+                user_numbers = [int(i) for i in user_numbers]
+                if user_numbers[0] > 3 or user_numbers[1] > 3:
+                    error.append("Coordinates should be from 1 to 3!")
+                    errors.append("Coordinates should be from 1 to 3!")
+            except:
+                errors.append("You should enter numbers!")
+            finally:
+                if len(error) > 8:
+                    print(error[-1])
+                elif len(errors) > 8:
+                    print(errors[-1])
+                        
+    if len(errors) == 0:
+        user_cells = "".join(user_cells)
+        print_game(user_cells)
+        errors = []
+    else:
+        make_move(input())
+        errors = []
+    
+    # Count the X's and O's for further comparison
+    x = [i for i in user_cells if i == "X"]
+    o = [i for i in user_cells if i == "O"]
+
+    # Win combinations
+    combinations = [
+        [user_cells[0], user_cells[1], user_cells[2]],
+        [user_cells[3], user_cells[4], user_cells[5]],
+        [user_cells[6], user_cells[7], user_cells[8]],
+        [user_cells[0], user_cells[3], user_cells[6]],
+        [user_cells[1], user_cells[4], user_cells[7]],
+        [user_cells[2], user_cells[5], user_cells[8]],
+        [user_cells[0], user_cells[4], user_cells[8]],
+        [user_cells[2], user_cells[4], user_cells[6]]
+    ]
+
+    # List of X's and O's for loop
+    x_win = ["X", "X", "X"]
+    o_win = ["O", "O", "O"]
+
+    # Analyze the game
+    if x_win in combinations:
+        if o_win in combinations:
+            game_situation = "Impossible"
+        else:
+            game_situation = "X wins"
+    elif o_win in combinations:
+        if x_win in combinations:
+            game_situation = "Impossible"
+        else:
+            game_situation = "O wins"
+    elif abs(len(x) - len(o)) > 1:
+        game_situation = "Impossible"
+    elif " " in user_cells:
+        game_situation = "Game not finished"
+    else:
+        game_situation = "Draw"
+    
+    # Repeat the game
+    while True:
+        if game_situation == "Game not finished":
+            make_move(input())
+        else:
+            print(game_situation)
+        break
+        
+
+make_move()

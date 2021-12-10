@@ -13,7 +13,7 @@ print_game(user_cells)
 
 
 
-def make_move(user_move = input()):  # Function to make a move
+def make_move(user_move = input("Type the coordinates of your move")):  # Function to make a move
     global user_cells
     global last_play
     global game_situation
